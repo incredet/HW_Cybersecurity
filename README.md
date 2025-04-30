@@ -50,3 +50,41 @@ python verify.py --aes_key <hex> --seed 42
 Result
 Prints the verification message and exits with code 0 (valid) or 1 (invalid).
 
+# RSA Stego Project
+
+A simple tool to hide a digital signature inside a PNG image and check it later.
+
+---
+
+## Applications
+
+- **Protect image integrity**  
+  Make sure your image wasn’t changed by anyone else.  
+- **Prove ownership**  
+  Show that you’re the author of a photo or artwork.  
+- **Invisible watermark**  
+  Hide info inside the pixels without changing how the image looks.
+
+---
+
+## How it works
+
+1. **Sign**  
+   - Compute a SHA-256 hash of the image bytes.  
+   - Sign that hash with your RSA private key (PSS + SHA-256).
+
+2. **Encrypt**  
+   - Put the signature (and its length + checksum) into a little data block.  
+   - Encrypt that block with AES-256-CBC (with random IV).
+
+3. **Hide**  
+   - Turn the encrypted data into bits.  
+   - Shuffle pixel order using a seed.  
+   - Write each bit into the least significant bit of R, G, or B channels.
+
+4. **Verify**  
+   - Extract the bits (using the same seed).  
+   - Decrypt with your AES key.  
+   - Check the checksum and verify the RSA signature against the original image.
+
+
